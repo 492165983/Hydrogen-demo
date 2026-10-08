@@ -28,8 +28,10 @@ Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dov
 ```bash
 npm create @shopify/hydrogen@latest -- --template demo-store
 ```
-npx shopify hydrogen link      # 关联到你的店铺
-npx shopify hydrogen env pull  # 自动写入 .env
+# 关联到你的店铺
+npx shopify hydrogen link  
+# 自动写入 .env    
+npx shopify hydrogen env pull  
 
 
 Remember to update `.env` with your shop's domain and Storefront API token!
