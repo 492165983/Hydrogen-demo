@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Hydrogen template: Demo Store
 
 Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **full-featured setup** of components, queries and tooling to get started with Hydrogen. It is deployed at [hydrogen.shop](https://hydrogen.shop)
@@ -59,3 +60,7 @@ npm run dev
 1. Edit `Callback URI(s)` to include `https://<your-ngrok-domain>.app/account/authorize`
 1. Edit `Javascript origin(s)` to include your public domain `https://<your-ngrok-domain>.app` or keep it blank
 1. Edit `Logout URI` to include your public domain `https://<your-ngrok-domain>.app` or keep it blank
+=======
+# Hydrogen-demo
+这是无头电商Hydrogen 模板
+>>>>>>> 1b2e87c2cfc9a42de64cfb73a36132a04712311a
