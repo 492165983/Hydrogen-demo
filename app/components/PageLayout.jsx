@@ -305,72 +305,74 @@ function DesktopHeader({isHome, menu, openCart, title, logo}) {
   return (
     <header
       role="banner"
-      className={`sticky top-0 z-40 hidden h-[76px] w-full items-center justify-between gap-8 border-b border-black/[0.07] bg-white/95 px-10 leading-none backdrop-blur-md transition-shadow duration-300 lg:flex xl:px-14 ${
+      className={`sticky top-0 z-40 hidden w-full border-b border-black/[0.07] bg-white/95 leading-none backdrop-blur-md transition-shadow duration-300 lg:block ${
         y > 8 ? 'shadow-[0_8px_28px_-16px_rgba(0,0,0,0.25)]' : ''
       }`}
     >
-      {/* Left: shop logo (Shopify admin → Settings → Brand) */}
-      <div className="flex flex-1 items-center justify-start">
-        <Link
-          to="/"
-          prefetch="intent"
-          aria-label={title}
-          className="flex items-center text-neutral-900 transition-opacity hover:opacity-80"
-        >
-          <ShopLogo
-            logo={logo}
-            title={title}
-            className="h-11 w-auto object-contain"
-          />
-        </Link>
-      </div>
-
-      {/* Center: top level menu items */}
-      <nav className="flex flex-none items-center gap-9">
-        {(menu?.items || []).map((item) => (
+      <div className="mx-auto flex h-[76px] w-full max-w-[1440px] items-center justify-between gap-8 px-6 md:px-10 lg:px-14">
+        {/* Left: shop logo (Shopify admin → Settings → Brand) */}
+        <div className="flex flex-1 items-center justify-start">
           <Link
-            key={item.id}
-            to={item.to}
-            target={item.target}
+            to="/"
             prefetch="intent"
-            className={({isActive}) =>
-              [
-                'relative py-1 text-[15px] font-semibold tracking-tight transition-colors',
-                isActive
-                  ? 'text-[#e4002b]'
-                  : 'text-neutral-900 hover:text-[#e4002b]',
-              ].join(' ')
-            }
+            aria-label={title}
+            className="flex items-center text-neutral-900 transition-opacity hover:opacity-80"
           >
-            {item.title}
+            <ShopLogo
+              logo={logo}
+              title={title}
+              className="h-11 w-auto object-contain"
+            />
           </Link>
-        ))}
-      </nav>
+        </div>
 
-      {/* Right: search / account / cart */}
-      <div className="flex flex-1 items-center justify-end gap-2">
-        <Form
-          method="get"
-          action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="flex items-center gap-1 rounded-full bg-neutral-100 py-1 pl-4 pr-1 transition-colors focus-within:bg-neutral-200/80"
-        >
-          <Input
-            className="w-36 border-transparent bg-transparent text-[13px] text-neutral-900 placeholder:opacity-100 placeholder:text-neutral-400 focus:border-transparent xl:w-44"
-            type="search"
-            variant="minisearch"
-            placeholder="Buscar"
-            name="q"
-          />
-          <button
-            type="submit"
-            aria-label="Buscar"
-            className="relative flex h-8 w-8 items-center justify-center rounded-full text-neutral-700 transition hover:bg-white hover:text-[#e4002b]"
+        {/* Center: top level menu items */}
+        <nav className="flex flex-none items-center gap-9">
+          {(menu?.items || []).map((item) => (
+            <Link
+              key={item.id}
+              to={item.to}
+              target={item.target}
+              prefetch="intent"
+              className={({isActive}) =>
+                [
+                  'relative py-1 text-[15px] font-semibold tracking-tight transition-colors',
+                  isActive
+                    ? 'text-[#e4002b]'
+                    : 'text-neutral-900 hover:text-[#e4002b]',
+                ].join(' ')
+              }
+            >
+              {item.title}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right: search / account / cart */}
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Form
+            method="get"
+            action={params.locale ? `/${params.locale}/search` : '/search'}
+            className="flex items-center gap-1 rounded-full bg-neutral-100 py-1 pl-4 pr-1 transition-colors focus-within:bg-neutral-200/80"
           >
-            <IconSearch />
-          </button>
-        </Form>
-        <AccountLink className="relative flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 transition hover:bg-neutral-100 hover:text-[#e4002b]" />
-        <CartCount isHome={false} openCart={openCart} />
+            <Input
+              className="w-36 border-transparent bg-transparent text-[13px] text-neutral-900 placeholder:opacity-100 placeholder:text-neutral-400 focus:border-transparent xl:w-44"
+              type="search"
+              variant="minisearch"
+              placeholder="Buscar"
+              name="q"
+            />
+            <button
+              type="submit"
+              aria-label="Buscar"
+              className="relative flex h-8 w-8 items-center justify-center rounded-full text-neutral-700 transition hover:bg-white hover:text-[#e4002b]"
+            >
+              <IconSearch />
+            </button>
+          </Form>
+          <AccountLink className="relative flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 transition hover:bg-neutral-100 hover:text-[#e4002b]" />
+          <CartCount isHome={false} openCart={openCart} />
+        </div>
       </div>
     </header>
   );
