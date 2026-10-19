@@ -44,7 +44,7 @@ export default function Policies() {
 
   return (
     <>
-      <PageHeader heading="Policies" />
+      <PageHeader heading="Políticas" />
       <Section padding="x" className="mb-24">
         {policies.map((policy) => {
           return (

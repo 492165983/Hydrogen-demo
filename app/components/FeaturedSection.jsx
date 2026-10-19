@@ -22,7 +22,7 @@ export function FeaturedSection() {
     <>
       {featuredCollections.nodes.length < 2 && (
         <FeaturedCollections
-          title="Popular Collections"
+          title="Coleções populares"
           collections={featuredCollections}
         />
       )}

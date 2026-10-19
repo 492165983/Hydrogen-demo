@@ -180,7 +180,7 @@ export default function EditAddress() {
   return (
     <>
       <Text className="mt-4 mb-6" as="h3" size="lead">
-        {isNewAddress ? 'Add address' : 'Edit address'}
+        {isNewAddress ? 'Adicionar endereço' : 'Editar endereço'}
       </Text>
       <div className="max-w-lg">
         <Form method="post">
@@ -202,8 +202,8 @@ export default function EditAddress() {
               required
               type="text"
               autoComplete="given-name"
-              placeholder="First name"
-              aria-label="First name"
+              placeholder="Nome"
+              aria-label="Nome"
               defaultValue={address?.firstName ?? ''}
             />
           </div>
@@ -215,8 +215,8 @@ export default function EditAddress() {
               required
               type="text"
               autoComplete="family-name"
-              placeholder="Last name"
-              aria-label="Last name"
+              placeholder="Sobrenome"
+              aria-label="Sobrenome"
               defaultValue={address?.lastName ?? ''}
             />
           </div>
@@ -227,8 +227,8 @@ export default function EditAddress() {
               name="company"
               type="text"
               autoComplete="organization"
-              placeholder="Company"
-              aria-label="Company"
+              placeholder="Empresa"
+              aria-label="Empresa"
               defaultValue={address?.company ?? ''}
             />
           </div>
@@ -239,9 +239,9 @@ export default function EditAddress() {
               name="address1"
               type="text"
               autoComplete="address-line1"
-              placeholder="Address line 1*"
+              placeholder="Endereço, linha 1*"
               required
-              aria-label="Address line 1"
+              aria-label="Endereço, linha 1"
               defaultValue={address?.address1 ?? ''}
             />
           </div>
@@ -252,8 +252,8 @@ export default function EditAddress() {
               name="address2"
               type="text"
               autoComplete="address-line2"
-              placeholder="Address line 2"
-              aria-label="Address line 2"
+              placeholder="Endereço, linha 2"
+              aria-label="Endereço, linha 2"
               defaultValue={address?.address2 ?? ''}
             />
           </div>
@@ -265,8 +265,8 @@ export default function EditAddress() {
               type="text"
               required
               autoComplete="address-level2"
-              placeholder="City"
-              aria-label="City"
+              placeholder="Cidade"
+              aria-label="Cidade"
               defaultValue={address?.city ?? ''}
             />
           </div>
@@ -277,9 +277,9 @@ export default function EditAddress() {
               name="zoneCode"
               type="text"
               autoComplete="address-level1"
-              placeholder="State / Province (zoneCode)"
+              placeholder="Estado (zoneCode)"
               required
-              aria-label="State / Province (zoneCode)"
+              aria-label="Estado (zoneCode)"
               defaultValue={address?.zoneCode ?? ''}
             />
           </div>
@@ -290,9 +290,9 @@ export default function EditAddress() {
               name="zip"
               type="text"
               autoComplete="postal-code"
-              placeholder="Zip / Postal Code"
+              placeholder="CEP"
               required
-              aria-label="Zip"
+              aria-label="CEP"
               defaultValue={address?.zip ?? ''}
             />
           </div>
@@ -303,9 +303,9 @@ export default function EditAddress() {
               name="territoryCode"
               type="text"
               autoComplete="country"
-              placeholder="Country (Territory) Code"
+              placeholder="País (código)"
               required
-              aria-label="Country (Territory) Code"
+              aria-label="País (código)"
               defaultValue={address?.territoryCode ?? ''}
             />
           </div>
@@ -316,8 +316,8 @@ export default function EditAddress() {
               name="phoneNumber"
               type="tel"
               autoComplete="tel"
-              placeholder="Phone"
-              aria-label="Phone"
+              placeholder="Telefone"
+              aria-label="Telefone"
               defaultValue={address?.phoneNumber ?? ''}
             />
           </div>
@@ -333,7 +333,7 @@ export default function EditAddress() {
               className="inline-block ml-2 text-sm cursor-pointer"
               htmlFor="defaultAddress"
             >
-              Set as default address
+              Definir como endereço padrão
             </label>
           </div>
           <div className="mt-8">
@@ -343,7 +343,7 @@ export default function EditAddress() {
               variant="primary"
               disabled={state !== 'idle'}
             >
-              {state !== 'idle' ? 'Saving' : 'Save'}
+              {state !== 'idle' ? 'Salvando' : 'Salvar'}
             </Button>
           </div>
           <div>
@@ -352,7 +352,7 @@ export default function EditAddress() {
               className="w-full mt-2 rounded focus:shadow-outline"
               variant="secondary"
             >
-              Cancel
+              Cancelar
             </Button>
           </div>
         </Form>

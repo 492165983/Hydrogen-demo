@@ -222,12 +222,12 @@ export const getInputStyleClasses = (isError) => {
  */
 export function statusMessage(status) {
   const translations = {
-    SUCCESS: 'Success',
-    PENDING: 'Pending',
-    OPEN: 'Open',
-    FAILURE: 'Failure',
-    ERROR: 'Error',
-    CANCELLED: 'Cancelled',
+    SUCCESS: 'Concluído',
+    PENDING: 'Pendente',
+    OPEN: 'Aberto',
+    FAILURE: 'Falha',
+    ERROR: 'Erro',
+    CANCELLED: 'Cancelado',
   };
   try {
     return translations?.[status];

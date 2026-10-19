@@ -88,7 +88,7 @@ export default function CartRoute() {
 
   return (
     <div className="cart">
-      <h1>Cart</h1>
+      <h1>Carrinho</h1>
       <Cart layout="page" cart={cart} />
       <Analytics.CartView />
     </div>

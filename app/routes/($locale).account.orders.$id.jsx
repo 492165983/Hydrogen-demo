@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 import {json, redirect} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
-import {Money, Image, flattenConnection} from '@shopify/hydrogen';
+import {Image, flattenConnection} from '@shopify/hydrogen';
 import {statusMessage} from '~/lib/utils';
+import {Money} from '~/components/Money';
 import {Link} from '~/components/Link';
 import {Heading, PageHeader, Text} from '~/components/Text';
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
@@ -84,18 +85,18 @@ export default function OrderRoute() {
   } = useLoaderData();
   return (
     <div>
-      <PageHeader heading="Order detail">
+      <PageHeader heading="Detalhes do pedido">
         <Link to="/account">
-          <Text color="subtle">Return to Account Overview</Text>
+          <Text color="subtle">Voltar para a visão geral da conta</Text>
         </Link>
       </PageHeader>
       <div className="w-full p-6 sm:grid-cols-1 md:p-8 lg:p-12 lg:py-6">
         <div>
           <Text as="h3" size="lead">
-            Order No. {order.name}
+            Pedido nº {order.name}
           </Text>
           <Text className="mt-2" as="p">
-            Placed on {new Date(order.processedAt).toDateString()}
+            Realizado em {new Date(order.processedAt).toDateString()}
           </Text>
           <div className="grid items-start gap-12 sm:grid-cols-1 md:grid-cols-4 md:gap-16 sm:divide-y sm:divide-gray-200">
             <table className="min-w-full my-8 divide-y divide-gray-300 md:col-span-3">
@@ -105,19 +106,19 @@ export default function OrderRoute() {
                     scope="col"
                     className="pb-4 pl-0 pr-3 font-semibold text-left"
                   >
-                    Product
+                    Produto
                   </th>
                   <th
                     scope="col"
                     className="hidden px-4 pb-4 font-semibold text-right sm:table-cell md:table-cell"
                   >
-                    Price
+                    Preço
                   </th>
                   <th
                     scope="col"
                     className="hidden px-4 pb-4 font-semibold text-right sm:table-cell md:table-cell"
                   >
-                    Quantity
+                    Quantidade
                   </th>
                   <th
                     scope="col"
@@ -148,7 +149,7 @@ export default function OrderRoute() {
                           </Text>
                         </div>
                         <dl className="grid">
-                          <dt className="sr-only">Product</dt>
+                          <dt className="sr-only">Produto</dt>
                           <dd className="truncate lg:hidden">
                             <Heading size="copy" format as="h3">
                               {lineItem.title}
@@ -157,16 +158,16 @@ export default function OrderRoute() {
                               {lineItem.variantTitle}
                             </Text>
                           </dd>
-                          <dt className="sr-only">Price</dt>
+                          <dt className="sr-only">Preço</dt>
                           <dd className="truncate sm:hidden">
                             <Text size="fine" className="mt-4">
                               <Money data={lineItem.price} />
                             </Text>
                           </dd>
-                          <dt className="sr-only">Quantity</dt>
+                          <dt className="sr-only">Quantidade</dt>
                           <dd className="truncate sm:hidden">
                             <Text className="mt-1" size="fine">
-                              Qty: {lineItem.quantity}
+                              Qtd: {lineItem.quantity}
                             </Text>
                           </dd>
                         </dl>
@@ -195,13 +196,13 @@ export default function OrderRoute() {
                       colSpan={3}
                       className="hidden pt-6 pl-6 pr-3 font-normal text-right sm:table-cell md:pl-0"
                     >
-                      <Text>Discounts</Text>
+                      <Text>Descontos</Text>
                     </th>
                     <th
                       scope="row"
                       className="pt-6 pr-3 font-normal text-left sm:hidden"
                     >
-                      <Text>Discounts</Text>
+                      <Text>Descontos</Text>
                     </th>
                     <td className="pt-6 pl-3 pr-4 font-medium text-right text-green-700 md:pr-3">
                       {discountPercentage ? (
@@ -244,7 +245,7 @@ export default function OrderRoute() {
                     scope="row"
                     className="pt-4 pr-3 font-normal text-left sm:hidden"
                   >
-                    <Text>Tax</Text>
+                    <Text>Impostos</Text>
                   </th>
                   <td className="pt-4 pl-3 pr-4 text-right md:pr-3">
                     <Money data={order.totalTax} />
@@ -290,7 +291,7 @@ export default function OrderRoute() {
                   )}
                 </ul>
               ) : (
-                <p className="mt-3">No shipping address defined</p>
+                <p className="mt-3">Nenhum endereço de entrega definido</p>
               )}
               <Heading size="copy" className="mt-8 font-semibold" as="h3">
                 Status

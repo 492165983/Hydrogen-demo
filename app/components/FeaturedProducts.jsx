@@ -16,7 +16,7 @@ import {usePrefixPathWithLocale} from '~/lib/utils';
  */
 export function FeaturedProducts({
   count = 4,
-  heading = 'Shop Best Sellers',
+  heading = 'Mais vendidos',
   layout = 'drawer',
   onClose,
   query,
@@ -86,7 +86,7 @@ function FeatureProductsContent({count = 4, onClick, products}) {
   }
 
   if (products?.length === 0) {
-    return <Text format>No products found.</Text>;
+    return <Text format>Nenhum produto encontrado.</Text>;
   }
 
   return (

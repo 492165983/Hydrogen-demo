@@ -4,10 +4,22 @@ import {Await, useLoaderData} from '@remix-run/react';
 import {getSeoMeta} from '@shopify/hydrogen';
 
 import {Hero} from '~/components/Hero';
-import {FeaturedCollections} from '~/components/FeaturedCollections';
+import {HeroBanner} from '~/components/HeroBanner';
 import {ProductSwimlane} from '~/components/ProductSwimlane';
+import {VideoShowcase} from '~/components/VideoShowcase';
+import {FeaturedProduct} from '~/components/FeaturedProduct';
+import {NewsletterSection} from '~/components/NewsletterSection';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getHeroPlaceholder} from '~/lib/placeholders';
+import {HOMEPAGE_BANNER_QUERY, selectBannerSlides} from '~/lib/banner';
+import {
+  VIDEO_SHOWCASE_QUERY,
+  mapVideoShowcases,
+} from '~/lib/video-showcase';
+import {
+  FEATURED_PRODUCT_QUERY,
+  mapFeaturedProduct,
+} from '~/lib/featured-product';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
 
@@ -44,16 +56,33 @@ export async function loader(args) {
  * @param {LoaderFunctionArgs}
  */
 async function loadCriticalData({context, request}) {
-  const [{shop, hero}] = await Promise.all([
+  const {language, country} = context.storefront.i18n;
+
+  const [{shop, hero}, banners] = await Promise.all([
     context.storefront.query(HOMEPAGE_SEO_QUERY, {
       variables: {handle: 'freestyle'},
     }),
-    // Add other queries here, so that they are loaded in parallel
+    // Banners come from Shopify metaobjects of type `hero_banner`.
+    // Failures (e.g. the definition does not exist yet) fall back to the
+    // static slides so the homepage always renders.
+    context.storefront
+      .query(HOMEPAGE_BANNER_QUERY, {
+        variables: {country, language},
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(
+          '[Homepage] Failed to load `hero_banner` metaobjects, using default banner slides.',
+          error,
+        );
+        return null;
+      }),
   ]);
 
   return {
     shop,
     primaryHero: hero,
+    bannerSlides: selectBannerSlides(banners?.metaobjects?.nodes),
     seo: seoPayload.home({url: request.url}),
   };
 }
@@ -101,20 +130,6 @@ function loadDeferredData({context}) {
       return null;
     });
 
-  const featuredCollections = context.storefront
-    .query(FEATURED_COLLECTIONS_QUERY, {
-      variables: {
-        country,
-        language,
-      },
-    })
-    .catch((error) => {
-      // Log query errors, but don't throw them so the page can still render
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return null;
-    });
-
   const tertiaryHero = context.storefront
     .query(COLLECTION_HERO_QUERY, {
       variables: {
@@ -130,11 +145,42 @@ function loadDeferredData({context}) {
       return null;
     });
 
+  // Homepage video strip ("Popular & Best Seller" style), from `video_showcase`
+  // metaobjects. Fails soft: no metaobjects published -> section not rendered.
+  const videoShowcase = context.storefront
+    .query(VIDEO_SHOWCASE_QUERY, {
+      variables: {country, language},
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        '[Homepage] Failed to load `video_showcase` metaobjects.',
+        error,
+      );
+      return null;
+    });
+
+  // "Featured product" banner (image + copy + CTA), from `featured_product`
+  // metaobjects. Fails soft: no metaobject published -> section not rendered.
+  const featuredProduct = context.storefront
+    .query(FEATURED_PRODUCT_QUERY, {
+      variables: {country, language},
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        '[Homepage] Failed to load `featured_product` metaobjects.',
+        error,
+      );
+      return null;
+    });
+
   return {
     featuredProducts,
     secondaryHero,
-    featuredCollections,
     tertiaryHero,
+    videoShowcase,
+    featuredProduct,
   };
 }
 
@@ -151,8 +197,10 @@ export default function Homepage() {
     primaryHero,
     secondaryHero,
     tertiaryHero,
-    featuredCollections,
     featuredProducts,
+    bannerSlides,
+    videoShowcase,
+    featuredProduct,
   } = useLoaderData();
 
   // TODO: skeletons vs placeholders
@@ -160,6 +208,41 @@ export default function Homepage() {
 
   return (
     <>
+      {/* Auto-playing banner carousel (5s per slide).
+          Slides come from Shopify (`hero_banner` metaobjects) when available,
+          otherwise the static fallback in `~/lib/banner.js` is used.
+          The aspect ratios match the current banner art: mobile 1200x1600
+          (3:4), desktop 3840x1682 (2.28:1). Change them here if the art ratio changes. */}
+      <HeroBanner
+        slides={bannerSlides}
+        interval={5000}
+        heightClass="aspect-[3/4] sm:aspect-[16/9] lg:aspect-[3840/1682] max-h-[90vh]"
+      />
+
+      {featuredProduct && (
+        <Suspense>
+          <Await resolve={featuredProduct}>
+            {(response) => {
+              const banner = mapFeaturedProduct(response?.metaobjects?.nodes);
+              if (!banner) return <></>;
+              return <FeaturedProduct banner={banner} />;
+            }}
+          </Await>
+        </Suspense>
+      )}
+
+      {videoShowcase && (
+        <Suspense>
+          <Await resolve={videoShowcase}>
+            {(response) =>
+              mapVideoShowcases(response?.metaobjects?.nodes).map((showcase) => (
+                <VideoShowcase key={showcase.id} showcase={showcase} />
+              ))
+            }
+          </Await>
+        </Suspense>
+      )}
+
       {primaryHero && (
         <Hero {...primaryHero} height="full" top loading="eager" />
       )}
@@ -178,8 +261,8 @@ export default function Homepage() {
               return (
                 <ProductSwimlane
                   products={response.products}
-                  title="Featured Products"
-                  count={4}
+                  title="Produtos em destaque"
+                  count={8}
                 />
               );
             }}
@@ -200,28 +283,6 @@ export default function Homepage() {
         </Suspense>
       )}
 
-      {featuredCollections && (
-        <Suspense>
-          <Await resolve={featuredCollections}>
-            {(response) => {
-              if (
-                !response ||
-                !response?.collections ||
-                !response?.collections?.nodes
-              ) {
-                return <></>;
-              }
-              return (
-                <FeaturedCollections
-                  collections={response.collections}
-                  title="Collections"
-                />
-              );
-            }}
-          </Await>
-        </Suspense>
-      )}
-
       {tertiaryHero && (
         <Suspense fallback={<Hero {...skeletons[2]} />}>
           <Await resolve={tertiaryHero}>
@@ -234,6 +295,8 @@ export default function Homepage() {
           </Await>
         </Suspense>
       )}
+
+      <NewsletterSection />
     </>
   );
 }
@@ -302,29 +365,6 @@ export const HOMEPAGE_FEATURED_PRODUCTS_QUERY = `#graphql
     }
   }
   ${PRODUCT_CARD_FRAGMENT}
-`;
-
-// @see: https://shopify.dev/api/storefront/current/queries/collections
-export const FEATURED_COLLECTIONS_QUERY = `#graphql
-  query homepageFeaturedCollections($country: CountryCode, $language: LanguageCode)
-  @inContext(country: $country, language: $language) {
-    collections(
-      first: 4,
-      sortKey: UPDATED_AT
-    ) {
-      nodes {
-        id
-        title
-        handle
-        image {
-          altText
-          width
-          height
-          url
-        }
-      }
-    }
-  }
 `;
 
 /** @typedef {import('@shopify/remix-oxygen').MetaArgs} MetaArgs */

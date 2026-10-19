@@ -47,7 +47,7 @@ export async function loader({request, context, params}) {
   const cartResult = result.cart;
 
   if (result.errors?.length || !cartResult) {
-    throw new Response('Link may be expired. Try checking the URL.', {
+    throw new Response('O link pode ter expirado. Verifique o endereço.', {
       status: 410,
     });
   }

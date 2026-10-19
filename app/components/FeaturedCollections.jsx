@@ -8,7 +8,7 @@ import {Link} from '~/components/Link';
  */
 export function FeaturedCollections({
   collections,
-  title = 'Collections',
+  title = 'Coleções',
   ...props
 }) {
   const haveCollections = collections?.nodes?.length > 0;

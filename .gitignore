@@ -5,5 +5,8 @@ node_modules
 /public/build
 /.mf
 .env
-.shopify
 .react-router
+.shopify
+/.hydrogen
+/.workbuddy
+/.github

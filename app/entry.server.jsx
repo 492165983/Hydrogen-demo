@@ -30,6 +30,21 @@ export default async function handleRequest(
       'https://www.googletagmanager.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
+    // Product landing pages may embed YouTube / Vimeo videos.
+    frameSrc: [
+      'self',
+      'https://www.youtube.com',
+      'https://www.youtube-nocookie.com',
+      'https://player.vimeo.com',
+    ],
+    // Shopify-hosted videos (Content -> Files) are served from the store's
+    // primary domain (hotwav-br.com), not cdn.shopify.com.
+    mediaSrc: [
+      'self',
+      'https://cdn.shopify.com',
+      'https://hotwav-br.com',
+      'https://*.hotwav-br.com',
+    ],
   });
 
   const body = await renderToReadableStream(

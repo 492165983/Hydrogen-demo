@@ -145,9 +145,12 @@ function Layout({children}) {
   /** @type {RootLoader} */
   const data = useRouteLoaderData('root');
   const locale = data?.selectedLocale ?? DEFAULT_LOCALE;
+  // `storefront.i18n` hands back the raw pair (language: PT, country: BR);
+  // `<html lang>` expects a BCP-47 tag such as `pt-BR`.
+  const htmlLang = `${locale.language.toLowerCase()}-${locale.country.toUpperCase()}`;
 
   return (
-    <html lang={locale.language}>
+    <html lang={htmlLang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -195,11 +198,11 @@ export function ErrorBoundary({error}) {
   const routeError = useRouteError();
   const isRouteError = isRouteErrorResponse(routeError);
 
-  let title = 'Error';
+  let title = 'Erro';
   let pageType = 'page';
 
   if (isRouteError) {
-    title = 'Not found';
+    title = 'Não encontrado';
     if (routeError.status === 404) pageType = routeError.data || pageType;
   }
 
@@ -251,6 +254,22 @@ const LAYOUT_QUERY = `#graphql
           url
         }
       }
+    }
+    privacyPolicy {
+      handle
+      title
+    }
+    shippingPolicy {
+      handle
+      title
+    }
+    refundPolicy {
+      handle
+      title
+    }
+    termsOfService {
+      handle
+      title
     }
   }
   fragment MenuItem on MenuItem {

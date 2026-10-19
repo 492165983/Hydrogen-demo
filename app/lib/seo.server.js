@@ -8,7 +8,7 @@
 function root({shop, url}) {
   return {
     title: shop?.name,
-    titleTemplate: '%s | Hydrogen Demo Store',
+    titleTemplate: '%s | HOTWAV',
     description: truncate(shop?.description ?? ''),
     handle: '@shopify',
     url,
@@ -44,9 +44,9 @@ function root({shop, url}) {
  */
 function home({url}) {
   return {
-    title: 'Home',
-    titleTemplate: '%s | Hydrogen Demo Store',
-    description: 'The best place to buy snowboarding products',
+    title: 'Início',
+    titleTemplate: '%s | HOTWAV',
+    description: 'Smartphones e tablets HOTWAV: resistentes, à prova de água e com bateria de longa duração.',
     url,
     robots: {
       noIndex: false,
@@ -55,7 +55,7 @@ function home({url}) {
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: 'Home page',
+      name: 'Página inicial',
     },
   };
 }
@@ -100,7 +100,7 @@ function productJsonLd({product, selectedVariant, url}) {
         {
           '@type': 'ListItem',
           position: 1,
-          name: 'Products',
+          name: 'Produtos',
           item: `${origin}/products`,
         },
         {
@@ -173,7 +173,7 @@ function collectionJsonLd({url, collection}) {
         {
           '@type': 'ListItem',
           position: 1,
-          name: 'Collections',
+          name: 'Coleções',
           item: `${siteUrl.host}/collections`,
         },
         {
@@ -213,7 +213,7 @@ function collection({collection, url}) {
     description: truncate(
       collection?.seo?.description ?? collection?.description ?? '',
     ),
-    titleTemplate: '%s | Collection',
+    titleTemplate: '%s | Coleção',
     url,
     media: {
       type: 'image',
@@ -245,8 +245,8 @@ function collectionsJsonLd({url, collections}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Collections',
-    description: 'All collections',
+    name: 'Coleções',
+    description: 'Todas as coleções',
     url,
     mainEntity: {
       '@type': 'ItemList',
@@ -264,9 +264,9 @@ function collectionsJsonLd({url, collections}) {
  */
 function listCollections({collections, url}) {
   return {
-    title: 'Collections',
-    titleTemplate: '%s | Collections',
-    description: 'All hydrogen collections',
+    title: 'Coleções',
+    titleTemplate: '%s | Coleções',
+    description: 'Todas as coleções da loja',
     url,
     jsonLd: collectionsJsonLd({collections, url}),
   };
@@ -291,7 +291,7 @@ function article({article, url}) {
   return {
     title: article?.seo?.title ?? article?.title,
     description: truncate(article?.seo?.description ?? ''),
-    titleTemplate: '%s | Journal',
+    titleTemplate: '%s | Blog',
     url,
     media: {
       type: 'image',
@@ -350,7 +350,7 @@ function page({page, url}) {
   return {
     description: truncate(page?.seo?.description || ''),
     title: page?.seo?.title ?? page?.title,
-    titleTemplate: '%s | Page',
+    titleTemplate: '%s | Página',
     url,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -371,7 +371,7 @@ function policy({policy, url}) {
   return {
     description: truncate(policy?.body ?? ''),
     title: policy?.title,
-    titleTemplate: '%s | Policy',
+    titleTemplate: '%s | Política',
     url,
   };
 }
@@ -394,9 +394,9 @@ function policies({policies, url}) {
     };
   });
   return {
-    title: 'Policies',
-    titleTemplate: '%s | Policies',
-    description: 'Hydroge store policies',
+    title: 'Políticas',
+    titleTemplate: '%s | Políticas',
+    description: 'Políticas da loja',
     jsonLd: [
       {
         '@context': 'https://schema.org',
@@ -406,8 +406,8 @@ function policies({policies, url}) {
       {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
-        description: 'Hydrogen store policies',
-        name: 'Policies',
+        description: 'Políticas da loja',
+        name: 'Políticas',
         url,
       },
     ],

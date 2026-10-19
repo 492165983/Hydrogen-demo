@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import {flattenConnection, Image, Money, useMoney} from '@shopify/hydrogen';
-import {Text} from '~/components/Text';
+import {flattenConnection, Image, useMoney} from '@shopify/hydrogen';
+import {Money} from '~/components/Money';
 import {Link} from '~/components/Link';
 import {Button} from '~/components/Button';
 import {AddToCartButton} from '~/components/AddToCartButton';
@@ -25,7 +25,8 @@ export function ProductCard({
   onClick,
   quickAdd,
 }) {
-  let cardLabel;
+  let badge = null;
+  let badgeTone = 'new';
 
   const cardProduct = product?.variants ? product : getProductPlaceholder();
   if (!cardProduct?.variants?.nodes?.length) return null;
@@ -36,58 +37,53 @@ export function ProductCard({
   const {image, price, compareAtPrice} = firstVariant;
 
   if (label) {
-    cardLabel = label;
+    badge = label;
   } else if (isDiscounted(price, compareAtPrice)) {
-    cardLabel = 'Sale';
+    badge = 'Promoção';
+    badgeTone = 'sale';
   } else if (isNewArrival(product.publishedAt)) {
-    cardLabel = 'New';
+    badge = 'Novo';
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={clsx('flex flex-col bg-white border border-primary/10 rounded-md overflow-hidden', className)}>
       <Link
         onClick={onClick}
         to={`/products/${product.handle}`}
-        prefetch="viewport"
+        prefetch="intent"
+        className="flex flex-col h-full"
       >
-        <div className={clsx('grid gap-4', className)}>
-          <div className="card-image aspect-[4/5] bg-primary/5">
-            {image && (
-              <Image
-                className="object-cover w-full fadeIn"
-                sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
-                aspectRatio="4/5"
-                data={image}
-                alt={image.altText || `Picture of ${product.title}`}
-                loading={loading}
-              />
+        <div className="card-image relative aspect-square bg-primary/5">
+          {image && (
+            <Image
+              className="object-cover w-full h-full fadeIn"
+              sizes="(min-width: 64em) 25vw, (min-width: 48em) 30vw, 45vw"
+              aspectRatio="1/1"
+              data={image}
+              alt={image.altText || `Picture of ${product.title}`}
+              loading={loading}
+            />
+          )}
+          {badge && (
+            <span
+              className={clsx(
+                'absolute top-2.5 left-2.5 rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white',
+                badgeTone === 'sale' ? 'bg-[#e4002b]' : 'bg-[#7c3aed]',
+              )}
+            >
+              {badge}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-1 flex-col items-center gap-1 px-3 py-3 text-center">
+          <h3 className="w-full text-sm font-medium leading-snug line-clamp-2">
+            {product.title}
+          </h3>
+          <div className="mt-auto flex items-center gap-2 text-sm">
+            <Money withoutTrailingZeros data={price} />
+            {isDiscounted(price, compareAtPrice) && (
+              <CompareAtPrice className="opacity-50" data={compareAtPrice} />
             )}
-            <Text
-              as="label"
-              size="fine"
-              className="absolute top-0 right-0 m-4 text-right text-notice"
-            >
-              {cardLabel}
-            </Text>
-          </div>
-          <div className="grid gap-1">
-            <Text
-              className="w-full overflow-hidden whitespace-nowrap text-ellipsis "
-              as="h3"
-            >
-              {product.title}
-            </Text>
-            <div className="flex gap-4">
-              <Text className="flex gap-4">
-                <Money withoutTrailingZeros data={price} />
-                {isDiscounted(price, compareAtPrice) && (
-                  <CompareAtPrice
-                    className={'opacity-50'}
-                    data={compareAtPrice}
-                  />
-                )}
-              </Text>
-            </div>
           </div>
         </div>
       </Link>
@@ -102,16 +98,12 @@ export function ProductCard({
           variant="secondary"
           className="mt-2"
         >
-          <Text as="span" className="flex items-center justify-center gap-2">
-            Add to Cart
-          </Text>
+          Add to Cart
         </AddToCartButton>
       )}
       {quickAdd && !firstVariant.availableForSale && (
         <Button variant="secondary" className="mt-2" disabled>
-          <Text as="span" className="flex items-center justify-center gap-2">
-            Sold out
-          </Text>
+          Sold out
         </Button>
       )}
     </div>
