@@ -44,6 +44,8 @@ export default async function handleRequest(
       'https://cdn.shopify.com',
       'https://hotwav-br.com',
       'https://*.hotwav-br.com',
+      'https://kkvfbd-ny.myshopify.com',
+      'https://*.myshopify.com',
     ],
   });
 
