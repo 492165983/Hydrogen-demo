@@ -9,6 +9,8 @@ import {ProductSwimlane} from '~/components/ProductSwimlane';
 import {VideoShowcase} from '~/components/VideoShowcase';
 import {FeaturedProduct} from '~/components/FeaturedProduct';
 import {NewsletterSection} from '~/components/NewsletterSection';
+import {WhyHotwav} from '~/components/WhyHotwav';
+import {FaqSection} from '~/components/FaqSection';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getHeroPlaceholder} from '~/lib/placeholders';
 import {HOMEPAGE_BANNER_QUERY, selectBannerSlides} from '~/lib/banner';
@@ -295,6 +297,10 @@ export default function Homepage() {
           </Await>
         </Suspense>
       )}
+
+      <WhyHotwav />
+
+      <FaqSection />
 
       <NewsletterSection />
     </>
