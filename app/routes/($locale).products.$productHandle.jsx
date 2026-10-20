@@ -87,8 +87,21 @@ async function loadCriticalData({params, request, context}) {
   const selectedVariant = product.selectedOrFirstAvailableVariant ?? {};
   const variants = getAdjacentAndFirstAvailableVariants(product);
 
+  // Shopify falls back to the shop name when a product has no vendor set. On
+  // this store the products created before the rename still carry the old shop
+  // name ("我的商店"), which would show up right under the product title.
+  // Treat those leftovers as "no vendor": null -> nothing rendered, no brand in
+  // the Product JSON-LD.
+  const rawVendor = product.vendor?.trim() ?? '';
+  const isPlaceholderVendor =
+    !rawVendor ||
+    rawVendor === shop?.name ||
+    rawVendor === '我的商店' ||
+    /[\u3400-\u9fff]/.test(rawVendor);
+  const vendorLabel = isPlaceholderVendor ? null : rawVendor;
+
   const seo = seoPayload.product({
-    product: {...product, variants},
+    product: {...product, variants, vendor: vendorLabel ?? ''},
     selectedVariant,
     url: request.url,
   });
@@ -97,6 +110,7 @@ async function loadCriticalData({params, request, context}) {
     product,
     variants,
     shop,
+    vendorLabel,
     storeDomain: shop.primaryDomain.url,
     recommended,
     seo,
@@ -126,9 +140,9 @@ export const meta = ({matches}) => {
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product, shop, recommended, variants, storeDomain, landing} =
+  const {product, shop, recommended, variants, storeDomain, landing, vendorLabel} =
     useLoaderData();
-  const {media, title, vendor, descriptionHtml} = product;
+  const {media, title, descriptionHtml} = product;
   const {shippingPolicy, refundPolicy} = shop;
 
   // Landing mode: the merchant created a `product_landing` entry for this
@@ -156,20 +170,20 @@ export default function Product() {
   return (
     <>
       <Section className="px-0 md:px-8 lg:px-12">
-        <div className="mx-auto grid w-full max-w-[1240px] items-start md:grid-cols-2 md:gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14">
+        <div className="mx-auto grid w-full max-w-[1440px] items-start md:grid-cols-2 md:gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14">
           <ProductGallery
             media={media.nodes}
             variantImage={selectedVariant?.image}
             className="w-full"
           />
           <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
-            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-lg md:px-0">
+            <section className="flex flex-col w-full gap-8 p-6 md:mx-auto md:px-0">
               <div className="grid gap-2">
                 <Heading as="h1" className="whitespace-normal">
                   {title}
                 </Heading>
-                {vendor && (
-                  <Text className={'opacity-50 font-medium'}>{vendor}</Text>
+                {vendorLabel && (
+                  <Text className={'opacity-50 font-medium'}>{vendorLabel}</Text>
                 )}
               </div>
 

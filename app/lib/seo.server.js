@@ -113,10 +113,11 @@ function productJsonLd({product, selectedVariant, url}) {
     {
       '@context': 'https://schema.org',
       '@type': 'Product',
-      brand: {
-        '@type': 'Brand',
-        name: product.vendor,
-      },
+      // Only emit `brand` when the product actually has a vendor — Shopify
+      // echoes the shop name back as vendor otherwise.
+      ...(product.vendor
+        ? {brand: {'@type': 'Brand', name: product.vendor}}
+        : {}),
       description,
       image: [selectedVariant?.image?.url ?? ''],
       name: product.title,

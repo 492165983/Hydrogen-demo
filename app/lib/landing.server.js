@@ -744,12 +744,55 @@ export async function loadLandingContent({context}, productHandle) {
     });
 
   const nodes = data?.metaobjects?.nodes ?? [];
-  const match = nodes.find((node) => {
-    const fieldHandle = (node?.fields ?? []).find(
-      (field) => field?.key === 'product_handle',
-    )?.value;
-    return fieldHandle === productHandle || node?.handle === productHandle;
-  });
+  const fieldHandleOf = (node) =>
+    (node?.fields ?? []).find((field) => field?.key === 'product_handle')?.value;
 
-  return match ? parseLandingMetaobject(match) : null;
+  // 1) Exact match: metaobject `product_handle` or the entry handle itself.
+  const exact = nodes.find(
+    (node) =>
+      fieldHandleOf(node) === productHandle || node?.handle === productHandle,
+  );
+  if (exact) return parseLandingMetaobject(exact);
+
+  // 2) Fallback: the configured handle is a shorter prefix of the real product
+  //    handle. Happens when a product was duplicated in Shopify and got a
+  //    suffix (`hotwav-cyber-17` -> `hotwav-cyber-17-rugged-phone-1`), so the
+  //    landing silently stopped rendering. Only used when unambiguous.
+  const prefixCandidates = nodes
+    .map((node) => ({node, handle: fieldHandleOf(node)}))
+    .filter(
+      ({handle}) =>
+        typeof handle === 'string' &&
+        handle.length > 0 &&
+        productHandle.startsWith(`${handle}-`),
+    )
+    .sort((a, b) => b.handle.length - a.handle.length);
+
+  const best = prefixCandidates[0];
+  if (!best) {
+    // No match: log the configured values so a typo (e.g. the product *title*
+    // pasted into `product_handle`) is visible in the server log instead of
+    // silently rendering the default product page.
+    const configured = nodes
+      .map((node) => fieldHandleOf(node))
+      .filter(Boolean)
+      .join(', ');
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[product_landing] No entry matches product "${productHandle}". Configured product_handle values: ${configured || '(none)'}`,
+    );
+    return null;
+  }
+
+  const tied = prefixCandidates.filter(
+    (candidate) => candidate.handle.length === best.handle.length,
+  );
+  if (tied.length > 1) return null;
+
+  // eslint-disable-next-line no-console
+  console.warn(
+    `[product_landing] "${best.handle}" matched product "${productHandle}" by prefix. Update \`product_handle\` to the real handle to make it explicit.`,
+  );
+
+  return parseLandingMetaobject(best.node);
 }

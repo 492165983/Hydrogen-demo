@@ -321,7 +321,7 @@ function DesktopHeader({isHome, menu, openCart, title, logo}) {
             <ShopLogo
               logo={logo}
               title={title}
-              className="h-11 w-auto object-contain"
+              className="h-11 w-auto object-contain shop-logo"
             />
           </Link>
         </div>
