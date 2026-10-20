@@ -31,6 +31,13 @@ export function AddToCartButton({
       action={CartForm.ACTIONS.LinesAdd}
     >
       {(fetcher) => {
+        // Shopify silently caps the quantity when stock is scarce; surface the
+        // warning so "I added 3 but got 1" never looks like a broken cart.
+        const warning = fetcher.data?.warnings?.[0]?.message;
+        const error =
+          fetcher.data?.userErrors?.[0]?.message ||
+          fetcher.data?.errors?.[0]?.message;
+
         return (
           <>
             <Button
@@ -44,6 +51,14 @@ export function AddToCartButton({
             >
               {children}
             </Button>
+            {(warning || error) && (
+              <p
+                role="status"
+                className="mt-2 text-left text-xs font-medium leading-snug text-amber-700"
+              >
+                {warning || error}
+              </p>
+            )}
           </>
         );
       }}

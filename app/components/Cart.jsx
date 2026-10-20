@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import {useRef} from 'react';
+import {useFetchers} from '@remix-run/react';
 import useScroll from 'react-use/esm/useScroll';
 import {
   flattenConnection,
@@ -149,6 +150,13 @@ function CartLines({layout = 'drawer', lines: cartLines}) {
   const scrollRef = useRef(null);
   const {y} = useScroll(scrollRef);
 
+  // Shopify caps line quantities at the available stock. Surface its warning
+  // instead of silently showing an unchanged quantity after +/- clicks.
+  const warning = useFetchers()
+    .flatMap((fetcher) => fetcher.data?.warnings ?? [])
+    .map((item) => item?.message)
+    .filter(Boolean)[0];
+
   const className = clsx([
     y > 0 ? 'border-t' : '',
     layout === 'page'
@@ -162,6 +170,17 @@ function CartLines({layout = 'drawer', lines: cartLines}) {
       aria-labelledby="cart-contents"
       className={className}
     >
+      {warning && (
+        <p
+          role="status"
+          className={clsx(
+            'text-xs font-medium leading-snug text-amber-700',
+            layout === 'page' ? 'mb-4' : 'mb-3',
+          )}
+        >
+          {warning}
+        </p>
+      )}
       <ul className="grid gap-6 md:gap-10">
         {currentLines.map((line) => (
           <CartLineItem key={line.id} line={line} />

@@ -62,13 +62,14 @@ export async function action({request, context}) {
     headers.set('Location', redirectTo);
   }
 
-  const {cart: cartResult, errors, userErrors} = result;
+  const {cart: cartResult, errors, userErrors, warnings} = result;
 
   return json(
     {
       cart: cartResult,
       userErrors,
       errors,
+      warnings,
     },
     {status, headers},
   );
