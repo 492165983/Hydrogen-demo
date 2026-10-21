@@ -68,6 +68,31 @@
   animation-duration: var(--banner-interval, 5000ms);
 }
 
+/* Scroll hint dot (text-knockout video section) */
+@keyframes tvScrollDot {
+  0% {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(320%);
+    opacity: 0;
+  }
+}
+
+.tv-scroll-dot {
+  animation: tvScrollDot 1.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv-scroll-dot {
+    animation: none;
+  }
+}
+
 .banner-progress[data-paused='true'] {
   animation-play-state: paused;
 }

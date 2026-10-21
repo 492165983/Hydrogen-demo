@@ -55,7 +55,7 @@ export const VIDEO_SHOWCASE_QUERY = `#graphql
  * so the 480p file looks identical and loads much faster than 1080p.
  * Shopify exposes HLS (.m3u8) too, which needs special playback — skipped.
  */
-function pickVideoSource(sources = []) {
+export function pickVideoSource(sources = []) {
   const mp4 = (sources || []).filter(
     (source) => source?.url && (source.mimeType || '').includes('mp4'),
   );

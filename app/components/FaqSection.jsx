@@ -39,7 +39,7 @@ const FAQS = [
 
 export function FaqSection() {
   // All items expanded by default (matches the reference layout).
-  const [open, setOpen] = useState(() => FAQS.map(() => true));
+  const [open, setOpen] = useState(() => FAQS.map(() => false));
 
   const toggle = (i) =>
     setOpen((prev) => prev.map((v, j) => (j === i ? !v : v)));

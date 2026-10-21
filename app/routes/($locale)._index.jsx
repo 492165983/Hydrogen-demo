@@ -7,6 +7,7 @@ import {Hero} from '~/components/Hero';
 import {HeroBanner} from '~/components/HeroBanner';
 import {ProductSwimlane} from '~/components/ProductSwimlane';
 import {VideoShowcase} from '~/components/VideoShowcase';
+import {TextVideoReveal} from '~/components/TextVideoReveal';
 import {FeaturedProduct} from '~/components/FeaturedProduct';
 import {NewsletterSection} from '~/components/NewsletterSection';
 import {WhyHotwav} from '~/components/WhyHotwav';
@@ -14,10 +15,11 @@ import {FaqSection} from '~/components/FaqSection';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getHeroPlaceholder} from '~/lib/placeholders';
 import {HOMEPAGE_BANNER_QUERY, selectBannerSlides} from '~/lib/banner';
+import {VIDEO_SHOWCASE_QUERY, mapVideoShowcases} from '~/lib/video-showcase';
 import {
-  VIDEO_SHOWCASE_QUERY,
-  mapVideoShowcases,
-} from '~/lib/video-showcase';
+  TEXT_VIDEO_REVEAL_QUERY,
+  mapTextVideoReveal,
+} from '~/lib/text-video-reveal';
 import {
   FEATURED_PRODUCT_QUERY,
   mapFeaturedProduct,
@@ -177,11 +179,27 @@ function loadDeferredData({context}) {
       return null;
     });
 
+  // "Text knockout video" reveal, from `text_video_reveal` metaobjects.
+  // Fails soft: nothing published -> section not rendered.
+  const textVideoReveal = context.storefront
+    .query(TEXT_VIDEO_REVEAL_QUERY, {
+      variables: {country, language},
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        '[Homepage] Failed to load `text_video_reveal` metaobjects.',
+        error,
+      );
+      return null;
+    });
+
   return {
     featuredProducts,
     secondaryHero,
     tertiaryHero,
     videoShowcase,
+    textVideoReveal,
     featuredProduct,
   };
 }
@@ -202,6 +220,7 @@ export default function Homepage() {
     featuredProducts,
     bannerSlides,
     videoShowcase,
+    textVideoReveal,
     featuredProduct,
   } = useLoaderData();
 
@@ -237,10 +256,24 @@ export default function Homepage() {
         <Suspense>
           <Await resolve={videoShowcase}>
             {(response) =>
-              mapVideoShowcases(response?.metaobjects?.nodes).map((showcase) => (
-                <VideoShowcase key={showcase.id} showcase={showcase} />
-              ))
+              mapVideoShowcases(response?.metaobjects?.nodes).map(
+                (showcase) => (
+                  <VideoShowcase key={showcase.id} showcase={showcase} />
+                ),
+              )
             }
+          </Await>
+        </Suspense>
+      )}
+
+      {textVideoReveal && (
+        <Suspense>
+          <Await resolve={textVideoReveal}>
+            {(response) => {
+              const reveal = mapTextVideoReveal(response?.metaobjects?.nodes);
+              if (!reveal) return <></>;
+              return <TextVideoReveal reveal={reveal} />;
+            }}
           </Await>
         </Suspense>
       )}
