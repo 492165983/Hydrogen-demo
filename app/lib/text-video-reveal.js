@@ -82,7 +82,8 @@ export function mapTextVideoReveal(nodes = []) {
     const video = mediaNodesOf(fields.video).find(
       (media) => media?.__typename === 'Video',
     );
-    const source = pickVideoSource(video?.sources ?? []);
+    // Fullscreen playback: anything below 720p looks blurry when upscaled.
+    const source = pickVideoSource(video?.sources ?? [], {minHeight: 720});
     if (!source) continue;
 
     const posterImage = mediaNodesOf(fields.poster).find(

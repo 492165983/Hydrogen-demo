@@ -51,11 +51,16 @@ export const VIDEO_SHOWCASE_QUERY = `#graphql
 `;
 
 /**
- * Pick an mp4 source, preferring a small rendition: the cards are ~250px wide,
- * so the 480p file looks identical and loads much faster than 1080p.
+ * Pick an mp4 source.
+ *
+ * @param {Array<any>} sources Shopify `MediaFile.sources`
+ * @param {{minHeight?: number}} [options] lowest rendition that is acceptable.
+ *   The small swimlane cards (~250px wide) look identical at 480p and load much
+ *   faster; the fullscreen text-reveal section needs at least 720p or the
+ *   upscaled picture turns visibly blurry.
  * Shopify exposes HLS (.m3u8) too, which needs special playback — skipped.
  */
-export function pickVideoSource(sources = []) {
+export function pickVideoSource(sources = [], {minHeight = 480} = {}) {
   const mp4 = (sources || []).filter(
     (source) => source?.url && (source.mimeType || '').includes('mp4'),
   );
@@ -66,11 +71,15 @@ export function pickVideoSource(sources = []) {
     const match = source.url.match(/(?:SD|HD)-(\d+)p/i);
     return match ? Number.parseInt(match[1], 10) : null;
   };
-  // Smallest rendition that is still at least 480p; otherwise the smallest we have.
+  // Smallest rendition at or above `minHeight` (fastest download that still
+  // looks sharp); otherwise the largest we have.
   const sorted = [...pool].sort(
     (a, b) => (heightOf(a) ?? 9999) - (heightOf(b) ?? 9999),
   );
-  return sorted.find((source) => (heightOf(source) ?? 0) >= 480) ?? sorted[0];
+  return (
+    sorted.find((source) => (heightOf(source) ?? 0) >= minHeight) ??
+    sorted[sorted.length - 1]
+  );
 }
 
 /**
