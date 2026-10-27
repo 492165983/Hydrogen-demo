@@ -35,8 +35,13 @@ export function NewsletterSection({
     <section className="pb-16 pt-4 md:pb-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 lg:px-14">
         <div className="grid overflow-hidden rounded-[28px] bg-[#0e0e11] ring-1 ring-white/5 md:grid-cols-2">
-          {/* Left: image */}
-          <div className="relative h-[240px] overflow-hidden sm:h-[320px] md:h-auto md:min-h-[420px]">
+          {/* Left: image (links to the Google Maps address) */}
+          <a
+            href="https://www.google.com/maps?q=22.674604,%20114.059094"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative block h-[240px] overflow-hidden sm:h-[320px] md:h-auto md:min-h-[420px]"
+          >
             <img
               src={image}
               alt={alt}
@@ -45,7 +50,7 @@ export function NewsletterSection({
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-[#0e0e11]/90" />
-          </div>
+          </a>
 
           {/* Right: copy + form */}
           <div className="relative flex flex-col justify-center px-6 py-10 md:px-12 lg:px-16">
